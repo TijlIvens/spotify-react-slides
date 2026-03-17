@@ -97,14 +97,9 @@ comark: true
 
 ```typescript
 export const generateCodeVerifier = () => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
-    let verifier = "";
-    const array = new Uint8Array(128);
+    const array = new Uint8Array(32);
     window.crypto.getRandomValues(array);
-    for (const val of array) {
-        verifier += chars[val % chars.length];
-    }
-    return verifier;
+    return b64urlEncode(array);
 };
 
 export const generateCodeChallenge = async (codeVerifier: string) => {
@@ -165,14 +160,12 @@ export const getLoginUrl = async () => {
 const CallbackPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const hasCalled = useRef(false);
 
   useEffect(() => {
     const code = searchParams.get("code");
     const codeVerifier = localStorage.getItem("code_verifier");
 
-    if (code && codeVerifier && !hasCalled.current) {
-      hasCalled.current = true;
+    if (code && codeVerifier) {
       exchangeCodeForToken(code, codeVerifier);
     }
   }, [searchParams]);
@@ -271,7 +264,7 @@ export const getData = async (url: string, method: string = "GET") => {
 
 # Continue
 
-- You can find the solution of this part [here](/SpotifySolution.zip)
+- You can find the solution of this part [here](./SpotifySolution.zip)
 - Read the [Spotify API documentation](https://developer.spotify.com/documentation/web-api) to learn more about the API.
 - Here you can find all API requists you can do to the Spotify API.
 - Upgrade your app by adding more features, such as:
